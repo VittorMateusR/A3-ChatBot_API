@@ -29,7 +29,7 @@ import java.util.Scanner;
 
 import org.json.JSONObject;
 
-public class chatBot {
+public class ChatBot {
    public static void main(String[] args) throws Exception {
       String input;
       String nome;
@@ -50,16 +50,24 @@ public class chatBot {
       //rotina do chat
       System.out.println("Como posso te ajudar "+nome+"? (favor, não utilize acentos)");
       input=sc.nextLine().toLowerCase();
-      do{
-          String output=bancoRespostas(input);
-          System.out.println("\nResp: "+output);
-          System.out.println("\nO que mais poderia te ajudar? (Ou digite 'encerrar' para encerrar o atendimento)");
-          input=sc.nextLine().toLowerCase();
-      }while(!input.equals("encerrar"));
-      //Finalização do programa
-      System.out.println("Espero ter te ajudado "+nome+". Volte sempre!!!");
-      sc.close();
-  }
+      do {
+         if (input.contains("calcular")) {
+             System.out.println("Abrindo a calculadora...");
+             Calculadora.main(new String[]{});
+             System.out.println("\nO que mais poderia te ajudar? (Ou digite 'encerrar' para encerrar o atendimento)");
+             input = sc.nextLine().toLowerCase();
+         } else {
+             String output = bancoRespostas(input);
+             System.out.println("\nResp: " + output);
+             System.out.println("\nO que mais poderia te ajudar? (Ou digite 'encerrar' para encerrar o atendimento)");
+             input = sc.nextLine().toLowerCase();
+         }
+     } while (!input.equals("encerrar"));
+
+     // Finalização do programa
+     System.out.println("Espero ter te ajudado " + nome + ". Volte sempre!!!");
+     sc.close();
+ }
 
     //banco de respostas
     public static String bancoRespostas(String input){
@@ -72,7 +80,9 @@ public class chatBot {
             System.out.println("Por gentileza, informe a cidade desejada:");
             cidade=sc.nextLine().toLowerCase();
             clima=getWeather(cidade);
-        }
+     }
+
+
         HashMap<String, String> bancoRespostas = new HashMap<String, String>();
         bancoRespostas.put("data",time);
         bancoRespostas.put("hora",time);
@@ -101,6 +111,11 @@ public class chatBot {
         }
         return output;
     }
+
+    Calculadora calculadora = new Calculadora();
+
+
+
     //Função de data/hora
     public static String time(){
         LocalDateTime agora = LocalDateTime.now();
@@ -158,4 +173,6 @@ public class chatBot {
   
         return "Erro ao obter o tempo para a cidade " + cidade;
      }
+
+     
 }
