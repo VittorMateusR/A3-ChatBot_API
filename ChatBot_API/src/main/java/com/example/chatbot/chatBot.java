@@ -14,7 +14,7 @@ package com.example.chatbot;
  -matheus
  -matheus bagaçador de veia
  -sasa
- -vitor        
+ -Vittor Mateus Rodrigues - RA: 1252419997        
  Versão 1.3
  */
 
@@ -110,52 +110,75 @@ public class chatBot {
         return time;
     }
 
+    //Funcao de clima
+    for (int i = 0; i < keyWords.length; i++) {
+            if (input.contains(keyWords[i])) {
+                if (keyWords[i].equals("tempo") || keyWords[i].equals("clima") || keyWords[i].equals("temperatura")) {
+                    System.out.println("Por favor, forneça o nome da cidade para a previsao do tempo:");
+                    String cidade = sc.nextLine();
+                    return getWeather(cidade);
+                } else {
+                    output = respostas[i];
+                }
+            }
+        }
+    // Chamar API do clima
     public static String getWeather(String cidade) {
         String apiKey = "VR8WAF473S3W4JRHCJNE6L85D";
         String urlString = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/" + cidade + "?unitGroup=metric&key=" + apiKey + "&contentType=json";
-  
+
+        
+        // Fazer a requisicao GET no website da api em um bloco Try, Catch
         try {
-           URL url = new URL(urlString);
-           HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-           conn.setRequestMethod("GET");
-           int responseCode = conn.getResponseCode();
-           if (responseCode == 200) {
-              BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-              StringBuffer response = new StringBuffer();
-  
-              String inputLine;
-              while((inputLine = in.readLine()) != null) {
-                 response.append(inputLine);
-              }
-  
-              in.close();
-              JSONObject jsonResponse = new JSONObject(response.toString());
-              JSONObject condicoesAtuais = jsonResponse.getJSONObject("currentConditions");
-              double temperatura = condicoesAtuais.getDouble("temp");
-              double temperaturaTermica = condicoesAtuais.getDouble("feelslike");
-              String descricaoDoClima = condicoesAtuais.getString("conditions");
-              if (descricaoDoClima.equals("Clear")) {
-                 descricaoDoClima = "Claro";
-              } else if (descricaoDoClima.equals("Cloudy")) {
-                 descricaoDoClima = "Nublado";
-              } else if (descricaoDoClima.equals("Partly Cloudy")) {
-                 descricaoDoClima = "Parcialmente Nublado";
-              } else if (descricaoDoClima.equals("Rain")) {
-                 descricaoDoClima = "Chovendo";
-              } else if (!descricaoDoClima.equals("Showers") && !descricaoDoClima.equals("Drizzle")) {
-                 if (descricaoDoClima.equals("Showers")) {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            int responseCode = conn.getResponseCode();
+
+            // Se a resposta do site for (200), deu certo
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                // A API ira entregar o resultado em formato JSON, aqui iremos converter para um
+                // formato que o Java consiga compreender
+
+                JSONObject jsonResponse = new JSONObject(response.toString());
+                JSONObject condicoesAtuais = jsonResponse.getJSONObject("currentConditions");
+                double temperatura = condicoesAtuais.getDouble("temp");
+                double temperaturaTermica = condicoesAtuais.getDouble("feelslike");
+
+                // Aqui estamos traduzindo a condicao atual do clima para portugues
+                String descricaoDoClima = condicoesAtuais.getString("conditions");
+                if (descricaoDoClima.equals("Clear")) {
+                    descricaoDoClima = "Claro";
+                } else if (descricaoDoClima.equals("Cloudy")) {
+                    descricaoDoClima = "Nublado";
+                } else if (descricaoDoClima.equals("Partly Cloudy")) {
+                    descricaoDoClima = "Parcialmente Nublado";
+                } else if (descricaoDoClima.equals("Rain")) {
+                    descricaoDoClima = "Chovendo";
+                } else if (descricaoDoClima.equals("Showers") || descricaoDoClima.equals("Drizzle")) {
                     descricaoDoClima = "Chuviscando";
-                 }
-              } else {
-                 descricaoDoClima = "Chuviscando";
-              }
-  
-              return "O tempo em " + cidade + " est\u00e1 " + descricaoDoClima + " com temperatura de " + temperatura + "\u00b0C e sensacao t\u00e9rmica de " + temperaturaTermica;
-           }
-        } catch (Exception var16) {
-           var16.printStackTrace();
+                } else if (descricaoDoClima.equals("Showers")) {
+                    descricaoDoClima = "Chuviscando";
+                }
+
+                return "O tempo em " + cidade + " está " + descricaoDoClima + " com temperatura de " + temperatura
+                        + "°C e sensacao térmica de " + temperaturaTermica;
+            }
+            
+            //Se nao for possivel acessar a api, o codigo ira gerar um erro
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-  
         return "Erro ao obter o tempo para a cidade " + cidade;
-     }
+    }
 }
