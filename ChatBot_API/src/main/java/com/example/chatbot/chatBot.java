@@ -29,37 +29,54 @@ import java.util.Scanner;
 
 import org.json.JSONObject;
 
-public class chatBot {
+public class ChatBot {
    public static void main(String[] args) throws Exception {
-      String input;
-      String nome;
-      Scanner sc = new Scanner(System.in);
-      boolean helloThere=true;
-      //Boas vindas e identificação
-      do{
-          System.out.println("Inicie o chat: ");
-          input=sc.nextLine().toLowerCase();
-          if (input.contains("oi")||input.contains("ola")||input.contains("bom dia")||input.contains("boa tarde")||input.contains("boa noite")){
-          System.out.println("Olá, seja bem vindo! Primeiramente, me diga seu nome:");
-              helloThere=true;
-          } else{
-              helloThere=false;
-          }
-      }while(helloThere==false);
-      nome=sc.nextLine().toLowerCase();
-      //rotina do chat
-      System.out.println("Como posso te ajudar "+nome+"? (favor, não utilize acentos)");
-      input=sc.nextLine().toLowerCase();
-      do{
-          String output=bancoRespostas(input);
-          System.out.println("\nResp: "+output);
-          System.out.println("\nO que mais poderia te ajudar? (Ou digite 'encerrar' para encerrar o atendimento)");
-          input=sc.nextLine().toLowerCase();
-      }while(!input.equals("encerrar"));
-      //Finalização do programa
-      System.out.println("Espero ter te ajudado "+nome+". Volte sempre!!!");
-      sc.close();
-  }
+       String input;
+       String nome;
+       Scanner sc = new Scanner(System.in);
+       boolean helloThere = true;
+
+       // Boas vindas e identificação
+       do {
+           System.out.println("Inicie o chat: ");
+           input = sc.nextLine().toLowerCase();
+           if (input.contains("oi") || input.contains("ola") || input.contains("bom dia") || input.contains("boa tarde") || input.contains("boa noite")) {
+               System.out.println("Olá, seja bem vindo! Primeiramente, me diga seu nome:");
+               helloThere = true;
+           } else {
+               helloThere = false;
+           }
+       } while (!helloThere);
+
+       nome = sc.nextLine().toLowerCase();
+
+       // rotina do chat
+       System.out.println("Como posso te ajudar " + nome + "? (favor, não utilize acentos)");
+       input = sc.nextLine().toLowerCase();
+       do {
+           if (input.contains("calcular")) {
+               System.out.println("Abrindo a calculadora...");
+               new Thread(() -> Calculadora.main(new String[]{})).start();
+               System.out.println("\nO que mais poderia te ajudar? (Ou digite 'encerrar' para encerrar o atendimento)");
+               input = sc.nextLine().toLowerCase();
+           } else if (input.contains("jogo da forca")) {
+               System.out.println("Iniciando jogo da forca");
+               new Thread(() -> JogoDaForca.main(new String[]{})).start();
+               System.out.println("\nO que mais poderia te ajudar? (Ou digite 'encerrar' para encerrar o atendimento)");
+               input = sc.nextLine().toLowerCase();
+           } else {
+               String output = bancoRespostas(input);
+               System.out.println("\nResp: " + output);
+               System.out.println("\nO que mais poderia te ajudar? (Ou digite 'encerrar' para encerrar o atendimento)");
+               input = sc.nextLine().toLowerCase();
+           }
+       } while (!input.equals("encerrar"));
+
+       // Finalização do programa
+       System.out.println("Espero ter te ajudado " + nome + ". Volte sempre!!!");
+       sc.close();
+   }
+
 
     //banco de respostas
     public static String bancoRespostas(String input){
@@ -72,7 +89,9 @@ public class chatBot {
             System.out.println("Por gentileza, informe a cidade desejada:");
             cidade=sc.nextLine().toLowerCase();
             clima=getWeather(cidade);
-        }
+     }
+
+
         HashMap<String, String> bancoRespostas = new HashMap<String, String>();
         bancoRespostas.put("data",time);
         bancoRespostas.put("hora",time);
@@ -101,6 +120,10 @@ public class chatBot {
         }
         return output;
     }
+
+
+
+
     //Função de data/hora
     public static String time(){
         LocalDateTime agora = LocalDateTime.now();
@@ -158,4 +181,6 @@ public class chatBot {
   
         return "Erro ao obter o tempo para a cidade " + cidade;
      }
+
+     
 }
